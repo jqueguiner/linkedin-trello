@@ -5,7 +5,7 @@ Linkedin to Trello connector to follow the status of your hiring process
 https://github.com/jqueguiner/linkedin-trello/wiki
 
 # you need a 1st degree connection to see the trello button
-![](https://storage.gra3.cloud.ovh.net/v1/AUTH_8fd430a3849e412080fa33d2ab6b00ee/github-guides/Add_to_trello.png)
+![](https://storage.gra3.cloud.ovh.net/v1/AUTH_8fd430a3849e412080fa33d2ab6b00ee/github-guides/Add_to_Trello.png)
 
 # after adding the connection to the trello, refresh the page to get the trello card
 ![](https://storage.gra3.cloud.ovh.net/v1/AUTH_8fd430a3849e412080fa33d2ab6b00ee/github-guides/card.png)
