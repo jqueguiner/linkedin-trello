@@ -17,5 +17,6 @@ https://github.com/jqueguiner/linkedin-trello/wiki
 * you can add comment in 1 click
 * all the organisation gets the same status for the process (candidate not contacted twice!)
 * you can view the status of all you candidate pool from the trello board directly to have a 360 view of your candidates pipeline
+![](https://storage.gra3.cloud.ovh.net/v1/AUTH_8fd430a3849e412080fa33d2ab6b00ee/github-guides/dashboard.png)
 
 # Happy recruiting and feel free to contribute
