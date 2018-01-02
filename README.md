@@ -1,5 +1,5 @@
 # linkedin-trello
-Linkedin to Trello connector to follow the status of your hiring process
+Linkedin to Trello connector to follow the status of your hiring process accross your organization
 
 # Link to the Wiki
 https://github.com/jqueguiner/linkedin-trello/wiki
