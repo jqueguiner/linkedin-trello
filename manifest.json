@@ -1,0 +1,57 @@
+{
+  "name": "Trello Linkedin Helper",
+  "version": "0.2",
+  "manifest_version" : 2,
+  "description": "Trello Helper adds some much needed functionality to Trello. The current version focuses on exporting card information from lists.",
+  "background" : {
+      "page" : "background.html",
+      "persistent": false
+  },
+
+  "page_action" :
+  {
+      "default_icon": {
+          "19": "icons/19.png",
+          "38": "icons/38.png"
+      }
+  },
+
+  "content_scripts": [
+    {
+      "matches": [
+        "*://*.linkedin.com/in/*", 
+        "*://*.linkedin.com/search/results/*"
+      ],
+      "js": [
+        "settings/js/vendor/jquery.js",
+        "lib/trello_client.js",
+        "trello_trigger.js",
+        "lib/trello.embed.min.js"
+      ],
+      "run_at": "document_idle",
+      "all_frames": true
+    }
+  ],
+
+  "permissions": [
+    "tabs", 
+    "*://*.linkedin.com/in/*"
+  ],
+
+  "web_accessible_resources": [
+        "settings/index.html"
+    ],
+
+
+  "icons": {
+        "16": "icons/16.png",
+        "48": "icons/48.png",
+        "128": "icons/128.png"
+    },
+
+  "options_page": "settings/index.html",
+  "content_security_policy": "connect-src 'self' https://trello.com; script-src 'self' https://trello.com; object-src 'self' https://trello.com;"
+
+
+
+}
