@@ -12,7 +12,7 @@ https://github.com/jqueguiner/linkedin-trello/wiki
 
 
 
-* you can share the same trello and status with you colleague (but they need to have their how trello api key in the extension)
+* you can share the same trello and status with you colleague (but they need to have their how trello api key in the extension) and you need to invite them to the recruiting board
 * you can change the status of the recruiting process in 1 click from linkedin
 * you can add comment in 1 click
 * all the organisation gets the same status for the process (candidate not contacted twice!)
