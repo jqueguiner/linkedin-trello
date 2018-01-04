@@ -4,6 +4,33 @@ var trello_list = "";
 
 var trello_board = "";
 
+$(document).ready(function() {
+	console.log("Get Trello Board ID");
+	chrome.runtime.sendMessage({Message: "getTrelloBoardID"}, function (response) {
+
+	})
+	// accept messages from background
+	chrome.runtime.onMessage.addListener (function (request, sender, sendResponse) {
+		if(typeof request.trello_board !== "undefined")
+			trello_board = request.trello_board
+	});
+});
+
+$(document).ready(function() {
+	console.log("Get Trello API Key");
+	chrome.runtime.sendMessage({Message: "getTrelloAPIKey"}, function (response) {
+
+	})
+	// accept messages from background
+	chrome.runtime.onMessage.addListener (function (request, sender, sendResponse) {
+    	key = request.key;
+    	window.Trello.setKey(key);
+	});
+});
+
+
+
+
 
 var script_trello = document.createElement('script');
 
@@ -63,8 +90,7 @@ var not_connected = true
 var listName = null
 
 var authenticationSuccess = function() {
-	console.log(
-		'Successful authentication');
+	console.log('Successful authentication');
 	token = window.Trello.token();
 };
 
@@ -74,15 +100,12 @@ var authenticationFailure = function() {
 
 
 var creationSuccess = function(data) {
-	console.log(
-		'Card created successfully.');
-	console.log(JSON.stringify(data, null,
-		2));
+	console.log('Card created successfully.');
+	console.log(JSON.stringify(data, null, 2));
 };
 
 var foundListSuccess = function(data) {
 	console.log('List retrieved.');
-
 	$("#listName").text(data.name)
 }
 
@@ -284,13 +307,13 @@ var foundFailure = function(data) {
 	return false
 };
 
-window.Trello.setKey(key);
+
 window.Trello.authorize({
 	type: 'popup',
 	interactive: true,
 	persist: true,
 	expiration: 'never',
-	name: 'Getting Started Application',
+	name: 'Trello Linkedin Connector',
 	scope: {
 		read: 'true',
 		write: 'true'
@@ -300,84 +323,89 @@ window.Trello.authorize({
 });
 
 // linkedin/in profil
-var checkContents = setInterval(
-	function() {
-		
-		if(window.location.href.indexOf('/search/results/') > 0) {
-			not_seen = false
-		}
-
-		if (not_seen) {
-			if ($(".pv-s-profile-actions__label").length >0) {
+$(document).ready(function() {
+	var checkContents = setInterval(
+		function() {
+			
+			if(window.location.href.indexOf('/search/results/') > 0) {
 				not_seen = false
-
-				name = $(".pv-top-card-section__name").text()
-
-				try {
-					parent[0].after(trello_btn)
-					not_connected = false
-					$("#addToTrello").click(function() {
-						var newCard = {
-							name: name,
-							desc: url,
-							url: url,
-							idBoard: trello_board,
-							pos: 'top'
-						};
-
-						window.Trello.addCard(newCard);
-
-						$("#addToTrello").remove()
-						window.Trello.get("lists/" +
-							trello_list,
-							foundListSuccess)
-						window.Trello.get("boards/" +
-							trello_board + '/lists/',
-							foundListsSuccess)
-
-					});
-
-
-				} catch (e) {
-
-				}
-
-
-				found_card = window.Trello.get(
-					"boards/" + trello_board +
-					"/cards/?fields=name,shortUrl,comments,dateLastActivity,idList,labels,desc",
-					foundSuccess, 
-					foundFailure);
-
-
-				if ($("#ads-container").length > 0) {
-					$("#ads-container").remove();
-				}
-
-				if ($(".ad-banner").length > 0) {
-					$(".ad-banner").remove();
-				}
-
-
 			}
-		} else {
-			if ($("#addToTrello").length > 0) {} else {
-				if ($(".pv-s-profile-actions__label").text() == "Message") {
-					if ($("#card-container").length > 0) {
-						if ($('#card-container').attr('card_name') !== $(".pv-top-card-section__name").text()) {
-							window.location.reload()
-						} else {
-							//window.location.reload()
-						}
 
+			if (not_seen) {
+				if ($(".pv-s-profile-actions__label").length >0) {
+					not_seen = false
+
+					name = $(".pv-top-card-section__name").text()
+
+					try {
+						parent[0].after(trello_btn)
+						not_connected = false
+						$("#addToTrello").click(function() {
+
+
+
+							var newCard = {
+								name: name,
+								desc: url,
+								url: url,
+								idBoard: trello_board,
+								pos: 'top'
+							};
+
+							window.Trello.addCard(newCard);
+
+							$("#addToTrello").remove()
+							window.Trello.get("lists/" +
+								trello_list,
+								foundListSuccess)
+							window.Trello.get("boards/" +
+								trello_board + '/lists/',
+								foundListsSuccess)
+
+						});
+
+
+					} catch (e) {
+
+					}
+
+
+					found_card = window.Trello.get(
+						"boards/" + trello_board +
+						"/cards/?fields=name,shortUrl,comments,dateLastActivity,idList,labels,desc",
+						foundSuccess, 
+						foundFailure);
+
+
+					if ($("#ads-container").length > 0) {
+						$("#ads-container").remove();
+					}
+
+					if ($(".ad-banner").length > 0) {
+						$(".ad-banner").remove();
+					}
+
+
+				}
+			} else {
+				if ($("#addToTrello").length > 0) {} else {
+					if ($(".pv-s-profile-actions__label").text() == "Message") {
+						if ($("#card-container").length > 0) {
+							if ($('#card-container').attr('card_name') !== $(".pv-top-card-section__name").text()) {
+								window.location.reload()
+							} else {
+								//window.location.reload()
+							}
+
+						}
 					}
 				}
 			}
-		}
 
 
 
-	}, 1000);
+		}, 1000);
+})
 
 
 var interval = null;
