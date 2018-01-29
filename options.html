@@ -1,37 +1,38 @@
 <!DOCTYPE html>
 <html>
-	<head>
-		<title>Ahead</title>
-	</head>
-	<body>
-		<form>
-			<p>
-				<b>1.</b> Go to <a href="https://trello.com/app-key" target="_blank">https://trello.com/app-key</a> and copy to key to the text box below
-				<br>
-				<img src="https://storage.gra3.cloud.ovh.net/v1/AUTH_8fd430a3849e412080fa33d2ab6b00ee/github-guides/Capture%20d%E2%80%99e%CC%81cran%202018-01-02%20a%CC%80%2018.28.22.png" width="450">
-			</p>
-			
-			<label><b>Paste the Trello API key here : </b>
-				<input id="api_key" type="text" placeholder="a234daf345243b1c68efe42321agfe1">
-			</label>
-			<br>
+  <head>
+    <title>Config</title>
+  </head>
+  <body>
+    <form>
+      <p>
+        <b>1.</b> Go to <a href="https://trello.com/app-key" target="_blank">https://trello.com/app-key</a> and copy to key to the text box below
+        <br>
+        <img src="https://storage.gra3.cloud.ovh.net/v1/AUTH_8fd430a3849e412080fa33d2ab6b00ee/github-guides/Capture%20d%E2%80%99e%CC%81cran%202018-01-02%20a%CC%80%2018.28.22.png" width="450">
+      </p>
+      
+      <label><b>Paste the Trello API key here : </b>
+        <input id="api_key" type="text" placeholder="a234daf345243b1c68efe42321agfe1">
+      </label>
+      <br>
 
-			<p>
-				<b>2. </b>Go to <a href="https://trello.com/" target="_blank">https://trello.com/</a> and copy the board id in the box below
-				<br>
-				<img src="https://storage.gra3.cloud.ovh.net/v1/AUTH_8fd430a3849e412080fa33d2ab6b00ee/github-guides/trello_board_id.png" width="450">
-			</p>
-		
-			<label><b>Paste the Trello Recruiting Board ID here : </b>
-				<input id="board_id" type="text" placeholder="aFTRNtFr">
-			</label>
-		</form>
-		<br>
+      <p>
+        <b>2. </b>Go to <a href="https://trello.com/" target="_blank">https://trello.com/</a> and copy the board id in the box below
+        <br>
+        <img src="https://storage.gra3.cloud.ovh.net/v1/AUTH_8fd430a3849e412080fa33d2ab6b00ee/github-guides/trello_board_id.png" width="450">
+      </p>
+    
+      <label><b>Paste the Trello Recruiting Board ID here : </b>
+        <input id="board_id" type="text" placeholder="aFTRNtFr">
+      </label>
+    </form>
+    <br>
 
-	    <div id="key_status"></div>
-	    <div id="board_status"></div>
-	    <button id="save">Save</button>
-	    
-	    <script src="options.js"></script>
-	</body>
+    <div id="key_status"></div>
+    <div id="board_status"></div>
+    <div id="status"></div>
+    <button id="save">Save</button>
+      
+    <script src="options.js"></script>
+  </body>
 </html>
