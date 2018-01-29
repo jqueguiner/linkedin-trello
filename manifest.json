@@ -1,7 +1,7 @@
 {
   "name": "Trello Linkedin Helper",
   "version": "0.4",
-  "manifest_version": 3,
+  "manifest_version": 2,
   "description": "",
 
   "page_action" : {
