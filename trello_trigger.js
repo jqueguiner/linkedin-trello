@@ -4,61 +4,61 @@ var trello_list = "";
 
 var trello_board = "";
 
+
 $(document).ready(function() {
 
-	console.log("Get Trello API Key");
+	if (key == "") {
+		console.log("Get Trello API Key");
 
-	chrome.runtime.sendMessage({Message: "getTrelloAPIKey"}, function (response) {
+		chrome.runtime.sendMessage({Message: "getTrelloAPIKey"}, function (response) {
 
-	})
-	// accept messages from background
-	chrome.runtime.onMessage.addListener (function (request, sender, sendResponse) {
-
-
-		if(typeof request.key !== "undefined") {
-			key = request.key;
-			console.log("trello app key :" + request.key)
-
-    		window.Trello.setKey(key);
+		})
+		// accept messages from background
+		chrome.runtime.onMessage.addListener (function (request, sender, sendResponse) {
 
 
-			window.Trello.authorize({
-				type: 'popup',
-				interactive: true,
-				persist: true,
-				expiration: 'never',
-				name: 'Trello Linkedin Connector',
-				scope: {
-					read: 'true',
-					write: 'true'
-				},
-				success: authenticationSuccess,
-				error: authenticationFailure
-				});
+			if(typeof request.key !== "undefined") {
+				key = request.key;
+				console.log("trello app key :" + request.key)
 
-    		}
-		});
+	    		window.Trello.setKey(key);
+
+				window.Trello.authorize({
+					type: 'popup',
+					interactive: true,
+					persist: true,
+					expiration: 'never',
+					name: 'Trello Linkedin Connector',
+					scope: {
+						read: 'true',
+						write: 'true'
+					},
+					success: authenticationSuccess,
+					error: authenticationFailure
+					});
+
+	    		}
+			});
+		}
 	});
 
 
 $(document).ready(function() {
-	console.log("Get Trello Board ID");
-	chrome.runtime.sendMessage({Message: "getTrelloBoardID"}, function (response) {
-	})
-	// accept messages from background
-	chrome.runtime.onMessage.addListener (function (request, sender, sendResponse) {
-		if(typeof request.trello_board !== "undefined"){
-			trello_board = request.trello_board
-			console.log("board_id :" + request.trello_board)
-			}
-			
-		});
+	if (trello_board == "") {
+		console.log("Get Trello Board ID");
+		chrome.runtime.sendMessage({Message: "getTrelloBoardID"}, function (response) {
+		})
+		// accept messages from background
+		chrome.runtime.onMessage.addListener (function (request, sender, sendResponse) {
+			if(typeof request.trello_board !== "undefined"){
+				trello_board = request.trello_board
+				console.log("board_id :" + request.trello_board)
+				}
+				
+			});
+		}
 	});
 
-
-var authorize = function ( callback) {
-
-}
 
 
 var script_trello = document.createElement('script');
@@ -360,8 +360,6 @@ $(document).ready(function() {
 						not_connected = false
 						$("#addToTrello").click(function() {
 
-
-
 							var newCard = {
 								name: name,
 								desc: url,
@@ -384,7 +382,7 @@ $(document).ready(function() {
 
 
 					} catch (e) {
-
+						console.log(e)
 					}
 
 
