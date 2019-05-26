@@ -2,9 +2,7 @@ chrome.runtime.onMessage.addListener (
     function (request, sender, sendResponse) {
         if (request.Message == "getTrelloAPIKey") {
 
-			chrome.storage.sync.get({
-				'api_key': ''
-				},
+			chrome.storage.sync.get('api_key',
 				function(items){
 					var api_key = items.api_key;
 
@@ -13,14 +11,13 @@ chrome.runtime.onMessage.addListener (
 							;
 						});
 					});
+
 				});
         }
         else {
         	if (request.Message == "getTrelloBoardID") {
 
-			chrome.storage.sync.get({
-				'board_id': ''
-				},
+			chrome.storage.sync.get('board_id',
 				function(items){
 					var board_id = items.board_id;
 
@@ -29,6 +26,7 @@ chrome.runtime.onMessage.addListener (
 							;
 						});
 					});
+
 				});
         	} else {
         		console.log("Did not receive the response!!!")	

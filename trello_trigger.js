@@ -4,31 +4,60 @@ var trello_list = "";
 
 var trello_board = "";
 
-$(document).ready(function() {
-	console.log("Get Trello Board ID");
-	chrome.runtime.sendMessage({Message: "getTrelloBoardID"}, function (response) {
-
-	})
-	// accept messages from background
-	chrome.runtime.onMessage.addListener (function (request, sender, sendResponse) {
-		if(typeof request.trello_board !== "undefined")
-			trello_board = request.trello_board
-	});
-});
 
 $(document).ready(function() {
-	console.log("Get Trello API Key");
-	chrome.runtime.sendMessage({Message: "getTrelloAPIKey"}, function (response) {
 
-	})
-	// accept messages from background
-	chrome.runtime.onMessage.addListener (function (request, sender, sendResponse) {
-    	key = request.key;
-    	window.Trello.setKey(key);
+	if (key == "") {
+		console.log("Get Trello API Key");
+
+		chrome.runtime.sendMessage({Message: "getTrelloAPIKey"}, function (response) {
+
+		})
+		// accept messages from background
+		chrome.runtime.onMessage.addListener (function (request, sender, sendResponse) {
+
+
+			if(typeof request.key !== "undefined") {
+				key = request.key;
+				console.log("trello app key :" + request.key)
+
+	    		window.Trello.setKey(key);
+
+				window.Trello.authorize({
+					type: 'popup',
+					interactive: true,
+					persist: true,
+					expiration: 'never',
+					name: 'Trello Linkedin Connector',
+					scope: {
+						read: 'true',
+						write: 'true'
+					},
+					success: authenticationSuccess,
+					error: authenticationFailure
+					});
+
+	    		}
+			});
+		}
 	});
-});
 
 
+$(document).ready(function() {
+	if (trello_board == "") {
+		console.log("Get Trello Board ID");
+		chrome.runtime.sendMessage({Message: "getTrelloBoardID"}, function (response) {
+		})
+		// accept messages from background
+		chrome.runtime.onMessage.addListener (function (request, sender, sendResponse) {
+			if(typeof request.trello_board !== "undefined"){
+				trello_board = request.trello_board
+				console.log("board_id :" + request.trello_board)
+				}
+				
+			});
+		}
+	});
 
 
 
@@ -44,7 +73,7 @@ var btn_html = function(id, text) {
 		text + 
 		'</span><span class="a11y-text">' +
 		text + '</span></button>';
-}
+	}
 
 trello_btn.innerHTML = btn_html("addToTrello", "add To Trello")
 
@@ -52,7 +81,7 @@ massive_connect_btn.innerHTML = btn_html("massiveConnect", "Massive Connect")
 
 
 var parent = document.getElementsByClassName(
-	"pv-s-profile-actions pv-s-profile-actions--message button-primary-large mh1"
+	"pv-s-profile-actions pv-s-profile-actions--message button-primary-large mr2 mt2"
 );
 
 
@@ -285,6 +314,7 @@ var foundSuccess = function(data) {
 
 			window.Trello.get("lists/" + card
 				.idList, foundListSuccess)
+			alert(trello_board)
 			window.Trello.get("boards/" +
 				trello_board + '/lists/',
 				foundListsSuccess)
@@ -308,19 +338,7 @@ var foundFailure = function(data) {
 };
 
 
-window.Trello.authorize({
-	type: 'popup',
-	interactive: true,
-	persist: true,
-	expiration: 'never',
-	name: 'Trello Linkedin Connector',
-	scope: {
-		read: 'true',
-		write: 'true'
-	},
-	success: authenticationSuccess,
-	error: authenticationFailure
-});
+
 
 // linkedin/in profil
 $(document).ready(function() {
@@ -341,8 +359,6 @@ $(document).ready(function() {
 						parent[0].after(trello_btn)
 						not_connected = false
 						$("#addToTrello").click(function() {
-
-
 
 							var newCard = {
 								name: name,
@@ -366,7 +382,7 @@ $(document).ready(function() {
 
 
 					} catch (e) {
-
+						console.log(e)
 					}
 
 

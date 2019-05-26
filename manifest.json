@@ -1,6 +1,6 @@
 {
   "name": "Trello Linkedin Helper",
-  "version": "0.4",
+  "version": "0.6",
   "manifest_version": 2,
   "description": "",
 
@@ -10,7 +10,6 @@
       "38": "icons/38.png"
     }
   },
-
   "options_ui": {
     "page": "options.html",
     "chrome_style": true
