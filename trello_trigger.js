@@ -10,14 +10,17 @@ const linkedin_action_button_class = "pvs-profile-actions__action artdeco-button
 const linkedin_action_span_class = "artdeco-button__text"
 const extension_name = "Trello Linkedin Connector"
 
+
+
 $(document).ready(function () {
   if (key == "") {
     console.log("Get Trello API Key");
 
     chrome.runtime.sendMessage(
       { Message: "getTrelloAPIKey" },
-      function (response) {
-      }
+
+      function (response) {}
+
     );
     // accept messages from background
     chrome.runtime.onMessage.addListener(function (
@@ -27,7 +30,6 @@ $(document).ready(function () {
     ) {
       if (typeof request.key !== "undefined") {
         key = request.key;
-        // console.log("trello app key :" + request.key);
 
         window.Trello.setKey(key);
 
@@ -160,8 +162,7 @@ var foundCommentsSuccess = function (data) {
 
 var foundListsSuccess = function (data) {
 
-  // Fetching the recruiting steps / swimlanes
-  
+  // Fetching the recruiting steps / swimlanes  
   var out = "";
   out = out.concat(
     `<button 
@@ -189,6 +190,7 @@ var foundListsSuccess = function (data) {
   });
 
   out = out.concat(
+
     `<button 
       style="background-color:#FB8166;-moz-border-radius:6px;-webkit-border-radius:6px;border-radius:6px;border:1px solid #18ab29;display:inline-block;cursor:pointer;color:#ffffff;font-family:Arial;padding:2px 2px;text-decoration:none;text-shadow:0px 1px 0px #2f6627;" 
       class="close">
@@ -196,7 +198,6 @@ var foundListsSuccess = function (data) {
     </button>
     </br>`
   );
-  console.log(out)
 
   $("#allLists").html(out);
 
@@ -256,6 +257,7 @@ var foundListsSuccess = function (data) {
 
     setTimeout(function () {
       window.Trello.delete(`cards/${card_id}`);
+      
       $("#card-container").remove();
     }, 1000);
   });
@@ -304,6 +306,7 @@ var foundSuccess = function (data) {
         `boards/${trello_board}/lists/`,
         foundListsSuccess
       );
+      
       window.Trello.get(
         `cards/${card.id}/actions?filter=commentCard`,
         foundCommentsSuccess
@@ -323,7 +326,6 @@ var foundFailure = function (data) {
 // linkedin/in profil
 $(document).ready(function () {
 
-
   var checkContents = setInterval(function () {
 
     // if it's a linkedin search page
@@ -332,7 +334,7 @@ $(document).ready(function () {
     }
 
     if (not_seen) {
-      
+
       // action button section
       if ($(`.${linkedin_actions_section_class}`).length > 0) {
         not_seen = false;
@@ -353,6 +355,7 @@ $(document).ready(function () {
             $("#addToTrello").remove();
             
             // Trello card setup
+
             var newCard = {
               name: name,
               desc: url,
@@ -423,6 +426,7 @@ window.setInterval(function () {
     if ($(".button-primary-large").length) {
       $(".button-primary-large").each(function () {
         if ($(this).text().indexOf("Send now") !== -1) {
+
           console.log("Auto connected successfully");
           $(this).trigger("click");
         }
@@ -434,6 +438,7 @@ window.setInterval(function () {
 $(".search-results__total").prepend(massive_connect_btn);
 
 $(document).on('click', '#massiveConnect', function () {
+
   $("#massiveConnect").text("Please wait ... Connecting");
   wait(500);
   scroll(0, 1000);
@@ -451,7 +456,9 @@ $(document).on('click', '#massiveConnect', function () {
         //try {
         $(".button-primary-large").each(function () {
           if ($(this).text().indexOf("Send now") !== -1) {
+
             console.log("Auto connected successfully");
+
             $(this).trigger("click");
           }
         });
