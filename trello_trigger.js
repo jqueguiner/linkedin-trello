@@ -9,6 +9,7 @@ const linkedin_name_classes_selector = ".text-heading-xlarge.inline.t-24.v-align
 const linkedin_action_button_class = "pvs-profile-actions__action artdeco-button artdeco-button--2 artdeco-button--primary ember-view"
 const linkedin_action_span_class = "artdeco-button__text"
 const linkedin_top_card_class_selector = ".artdeco-card.ember-view.pv-top-card"
+const trello_user_card_section_id = "trello_user_card"
 
 const linkedin_section_container_title_function = (title) => `
   <div class="pvs-header__container">
@@ -36,19 +37,19 @@ const linkedin_section_container_title_function = (title) => `
   </div>
 `
 
-
-const linkedin_section_container_section_function = (title, content) => `
-  <section id="trello_section" class="artdeco-card ember-view break-words pb3 mt2">
+const linkedin_section_container_section_function = (id, title, content) => `
+  <section id="${id}" class="artdeco-card ember-view break-words pb3 mt2">
     ${linkedin_section_container_title_function(title)}
     ${linkedin_section_container_content_function(content)}
   </section>
 `
 
-
 const extension_name = "Trello Linkedin Connector"
 
 // name of the user
 const name = $(linkedin_name_classes_selector).text();
+
+var card_id = ""
 
 $(document).ready(function () {
   if (key == "") {
@@ -235,22 +236,21 @@ var foundListsSuccess = function (data) {
     </br>`
   );
 
-  $(linkedin_top_card_class_selector).first().after(linkedin_section_container_section_function(title="Status Manager", content=out))
+  $(linkedin_top_card_class_selector).first().after(linkedin_section_container_section_function(id="trello_status_mgr", title="Status Manager", content=out))
 
   $("#allLists").html(out);
 
-  $("#addComment").click(function () {
+
+  $(document).on('click', '#addComment', function () {
     var new_comment = prompt(
       "Please enter your comment",
       "I love Harry Potter !"
     );
 
-    window.Trello.post(
-      "cards/" +
-        $("#card-container").attr("card_id") +
-        `/actions/comments?text=${new_comment}`
-    );
-    $("#card-container").remove();
+    window.Trello.post(`cards/${card_id}/actions/comments?text=${new_comment}`);
+    
+    $(trello_user_card_section_id).remove();
+    
     not_seen = true;
   });
 
@@ -262,7 +262,6 @@ var foundListsSuccess = function (data) {
     }
   });
 
-  var card_id = $("#card-container").attr("card_id");
 
   $(".changeStatus").click(function () {
     var move_to_listId = $(this).attr("listId");
@@ -308,6 +307,7 @@ var foundSuccess = function (data) {
     // pick on the one that is related to the 
     // current profil
     if (card.name == name) {
+      card_id = card.id
       console.log(card)
     
       found_card_url = card.shortUrl;
@@ -325,7 +325,7 @@ var foundSuccess = function (data) {
           <b>Labels :</b><br>${flatten_labels}
         `;
       
-      $(linkedin_top_card_class_selector).first().after(linkedin_section_container_section_function("Trello User Card", existing_card))
+      $(linkedin_top_card_class_selector).first().after(linkedin_section_container_section_function(id=trello_user_card_section_id,title="Trello User Card", content=existing_card))
 
       $.each(card.labels, function (i, label) {
         existing_card = existing_card.concat(label.name + "</br>");
