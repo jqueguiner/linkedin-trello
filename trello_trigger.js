@@ -10,6 +10,8 @@ const linkedin_action_button_class = "pvs-profile-actions__action artdeco-button
 const linkedin_action_span_class = "artdeco-button__text"
 const linkedin_top_card_class_selector = ".artdeco-card.ember-view.pv-top-card"
 const trello_user_card_section_id = "trello_user_card"
+const trello_comments_section_id = "trello_comments"
+const trello_status_section_id = "trello_status_mgr"
 
 const linkedin_section_container_title_function = (title) => `
   <div class="pvs-header__container">
@@ -181,20 +183,22 @@ var foundListSuccess = function (data) {
 var foundCommentsSuccess = function (data) {
   console.log("Comments retrieved.");
 
-  var out = "";
-
+  var comments = "";
+  console.log(data)
   $.each(data, function (i, comment) {
-    out = out.concat(
+    comments = comments.concat(
       `<b>
         ${comment.date.substring(0, 10)}
-      </b>:
+        (${comment.memberCreator.initials})</b>:
       ${comment.data.text}
       <br/>
       `
     );
   });
 
-  $("#comments").html(out);
+  $(linkedin_top_card_class_selector).first().next().after(linkedin_section_container_section_function(id=trello_comments_section_id,title="Trello Comments", content=comments))
+
+  
 };
 
 var foundListsSuccess = function (data) {
@@ -231,12 +235,12 @@ var foundListsSuccess = function (data) {
     `<button 
       style="background-color:#FB8166;-moz-border-radius:6px;-webkit-border-radius:6px;border-radius:6px;border:1px solid #18ab29;display:inline-block;cursor:pointer;color:#ffffff;font-family:Arial;padding:2px 2px;text-decoration:none;text-shadow:0px 1px 0px #2f6627;" 
       class="close">
-      Close
+      Delete Card
     </button>
     </br>`
   );
 
-  $(linkedin_top_card_class_selector).first().after(linkedin_section_container_section_function(id="trello_status_mgr", title="Status Manager", content=out))
+  $(linkedin_top_card_class_selector).first().after(linkedin_section_container_section_function(id=trello_status_section_id, title="Status Manager", content=out))
 
   $("#allLists").html(out);
 
@@ -249,7 +253,9 @@ var foundListsSuccess = function (data) {
 
     window.Trello.post(`cards/${card_id}/actions/comments?text=${new_comment}`);
     
-    $(trello_user_card_section_id).remove();
+    $(`#${trello_comments_section_id}`).remove()
+    $(`#${trello_status_section_id}`).remove()
+    $(`#${trello_user_card_section_id}`).remove()
     
     not_seen = true;
   });
@@ -286,11 +292,6 @@ var foundListsSuccess = function (data) {
 
   $(document).on('click', '.close', function () {
     window.Trello.delete(`cards/${card_id}`);
-
-    setTimeout(function () {
-      window.Trello.delete(`cards/${card_id}`);
-      $("#card-container").remove();
-    }, 1000);
   });
 };
 
@@ -317,31 +318,11 @@ var foundSuccess = function (data) {
           <b>Status:</b> <div id="listName" current_listId="${card.idList}"></div><br>
           <b>Last Activity:</b> ${card.dateLastActivity}</br>
           <b>Name:</b> ${card.name}<br>
-          
           <b>Labels :</b><br>${flatten_labels}
         `;
       
       $(linkedin_top_card_class_selector).first().after(linkedin_section_container_section_function(id=trello_user_card_section_id,title="Trello User Card", content=existing_card))
 
-      $.each(card.labels, function (i, label) {
-        existing_card = existing_card.concat(label.name + "</br>");
-      });
-
-      desc = card.desc.replace(/\n/g, "<br />");
-
-      desc = desc.replace(url + "/", "");
-      desc = desc.replace(url, "");
-
-      existing_card = existing_card.concat(
-        `<div id="contact"><b>Contact : </b>${desc}</div>`
-      );
-      existing_card = existing_card.concat(
-        '<b>Comments : </b><div id="comments"></div>'
-      );
-      existing_card = existing_card.concat('<div id="allLists"></div>');
-
-      existing_card = existing_card.concat("</div>");
-      $(".right-rail").prepend(existing_card);
       $("#addToTrello").remove();
 
       window.Trello.get(`lists/${card.idList}`, foundListSuccess);
@@ -382,8 +363,6 @@ $(document).ready(function () {
       // action button section
       if ($(`.${linkedin_actions_section_class}`).length > 0) {
         not_seen = false;
-
-        
         
         try {
           $(`.${linkedin_actions_section_class}`).prepend(trello_btn);
