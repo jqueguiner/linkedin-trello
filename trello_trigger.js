@@ -263,19 +263,14 @@ var foundListsSuccess = function (data) {
   });
 
 
-  $(".changeStatus").click(function () {
+  $(document).on('click', '.changeStatus', function () {
     var move_to_listId = $(this).attr("listId");
-
+    
     //needs 1 put + second trigger to bypass chrome security policy
+    
     window.Trello.put(`cards/${card_id}`, {
       idList: move_to_listId,
-    });
-
-    setTimeout(function () {
-      window.Trello.put(`cards/${card_id}`, {
-        idList: move_to_listId,
-      });
-    }, 1000);
+    })
 
     $("#listName").html($(this).attr("listName"));
     $("#listName").attr("current_listId", move_to_listId);
@@ -289,7 +284,7 @@ var foundListsSuccess = function (data) {
     });
   });
 
-  $(".close").click(function () {
+  $(document).on('click', '.close', function () {
     window.Trello.delete(`cards/${card_id}`);
 
     setTimeout(function () {
@@ -318,6 +313,7 @@ var foundSuccess = function (data) {
       console.log(flatten_labels)
       existing_card =
         `
+          <b>Id:</b> ${card.id}<br>
           <b>Status:</b> <div id="listName" current_listId="${card.idList}"></div><br>
           <b>Last Activity:</b> ${card.dateLastActivity}</br>
           <b>Name:</b> ${card.name}<br>
