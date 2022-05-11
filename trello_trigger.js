@@ -4,13 +4,20 @@ var trello_list = "";
 
 var trello_board = "";
 
+const linkedin_actions_section_class = "pvs-profile-actions"
+const linkedin_name_classes_selector = ".text-heading-xlarge.inline.t-24.v-align-middle.break-words"
+const linkedin_action_button_class = "pvs-profile-actions__action artdeco-button artdeco-button--2 artdeco-button--primary ember-view"
+const linkedin_action_span_class = "artdeco-button__text"
+const extension_name = "Trello Linkedin Connector"
+
 $(document).ready(function () {
   if (key == "") {
     console.log("Get Trello API Key");
 
     chrome.runtime.sendMessage(
       { Message: "getTrelloAPIKey" },
-      function (response) {}
+      function (response) {
+      }
     );
     // accept messages from background
     chrome.runtime.onMessage.addListener(function (
@@ -20,19 +27,20 @@ $(document).ready(function () {
     ) {
       if (typeof request.key !== "undefined") {
         key = request.key;
-        console.log("trello app key :" + request.key);
+        // console.log("trello app key :" + request.key);
 
         window.Trello.setKey(key);
 
         window.Trello.authorize({
-          type: "popup",
+          type: "redirect",
           interactive: true,
           persist: true,
           expiration: "never",
-          name: "Trello Linkedin Connector",
+          name: extension_name,
           scope: {
             read: "true",
             write: "true",
+            account: false
           },
           success: authenticationSuccess,
           error: authenticationFailure,
@@ -71,22 +79,18 @@ var massive_connect_btn = document.createElement("massive_connect");
 
 var btn_html = function (id, text) {
   return (
-    '<button id="' +
-    id +
-    '" class="pv-s-profile-actions pv-s-profile-actions--message button-primary-large mh1"><span aria-hidden="true" class="pv-s-profile-actions__label">' +
-    text +
-    '</span><span class="a11y-text">' +
-    text +
-    "</span></button>"
+    `<button id="${id}" class="${linkedin_action_button_class}">
+      <span id="${id}" class="${linkedin_action_span_class}">${text}</span>
+    </button>`
   );
 };
 
-trello_btn.innerHTML = btn_html("addToTrello", "add To Trello");
+trello_btn.innerHTML = btn_html("addToTrello", "Add To Trello");
 
 massive_connect_btn.innerHTML = btn_html("massiveConnect", "Massive Connect");
-pvs - profile - actions;
+//pvs - profile - actions;
 
-var parent = document.getElementsByClassName("pv-s-profile-actions");
+var parent = document.getElementsByClassName(linkedin_actions_section_class);
 
 function wait(ms) {
   var d = new Date();
@@ -126,12 +130,12 @@ var authenticationFailure = function () {
 };
 
 var creationSuccess = function (data) {
-  console.log("Card created successfully.");
+  console.log("Card created successfully");
   console.log(JSON.stringify(data, null, 2));
 };
 
 var foundListSuccess = function (data) {
-  console.log("List retrieved.");
+  console.log("List retrieved");
   $("#listName").text(data.name);
 };
 
@@ -142,11 +146,12 @@ var foundCommentsSuccess = function (data) {
 
   $.each(data, function (i, comment) {
     out = out.concat(
-      "<b>" +
-        comment.date.substring(0, 10) +
-        "</b>: " +
-        comment.data.text +
-        "<br/>"
+      `<b>
+        ${comment.date.substring(0, 10)}
+      </b>:
+      ${comment.data.text}
+      <br/>
+      `
     );
   });
 
@@ -154,28 +159,44 @@ var foundCommentsSuccess = function (data) {
 };
 
 var foundListsSuccess = function (data) {
-  console.log("Lists retrieved.");
 
+  // Fetching the recruiting steps / swimlanes
+  
   var out = "";
   out = out.concat(
-    '<button style="background-color:#39aaf1;-moz-border-radius:6px;-webkit-border-radius:6px;border-radius:6px;border:1px solid #18ab29;display:inline-block;cursor:pointer;color:#ffffff;font-family:Arial;padding:2px 2px;text-decoration:none;text-shadow:0px 1px 0px #2f6627;" class="comment" id="addComment">Add comment</button></br>'
+    `<button 
+      style="background-color:#39aaf1;-moz-border-radius:6px;-webkit-border-radius:6px;border-radius:6px;border:1px solid #18ab29;display:inline-block;cursor:pointer;color:#ffffff;font-family:Arial;padding:2px 2px;text-decoration:none;text-shadow:0px 1px 0px #2f6627;" 
+      class="comment" 
+      id="addComment"
+      >
+      Add comment
+    </button>
+    </br>`
   );
-
+  
+  // Fetching the recruiting steps / swimlanes
   $.each(data, function (i, list) {
     out = out.concat(
-      '<button style="background-color:#44c767;-moz-border-radius:6px;-webkit-border-radius:6px;border-radius:6px;border:1px solid #18ab29;display:inline-block;cursor:pointer;color:#ffffff;font-family:Arial;padding:2px 2px;text-decoration:none;text-shadow:0px 1px 0px #2f6627;" class="changeStatus" listId="' +
-        list.id +
-        '" listName="' +
-        list.name +
-        '">Change status to ' +
-        list.name +
-        "</button></br>"
+      `<button 
+        style="background-color:#44c767;-moz-border-radius:6px;-webkit-border-radius:6px;border-radius:6px;border:1px solid #18ab29;display:inline-block;cursor:pointer;color:#ffffff;font-family:Arial;padding:2px 2px;text-decoration:none;text-shadow:0px 1px 0px #2f6627;" 
+        class="changeStatus" 
+        listId="${list.id}"
+        listName="${list.name}"> 
+        Change status to ${list.name}
+      </button>
+      </br>`
     );
   });
 
   out = out.concat(
-    '<button style="background-color:#FB8166;-moz-border-radius:6px;-webkit-border-radius:6px;border-radius:6px;border:1px solid #18ab29;display:inline-block;cursor:pointer;color:#ffffff;font-family:Arial;padding:2px 2px;text-decoration:none;text-shadow:0px 1px 0px #2f6627;" class="close">Close</button></br>'
+    `<button 
+      style="background-color:#FB8166;-moz-border-radius:6px;-webkit-border-radius:6px;border-radius:6px;border:1px solid #18ab29;display:inline-block;cursor:pointer;color:#ffffff;font-family:Arial;padding:2px 2px;text-decoration:none;text-shadow:0px 1px 0px #2f6627;" 
+      class="close">
+      Close
+    </button>
+    </br>`
   );
+  console.log(out)
 
   $("#allLists").html(out);
 
@@ -188,8 +209,7 @@ var foundListsSuccess = function (data) {
     window.Trello.post(
       "cards/" +
         $("#card-container").attr("card_id") +
-        "/actions/comments?text=" +
-        new_comment
+        `/actions/comments?text=${new_comment}`
     );
     $("#card-container").remove();
     not_seen = true;
@@ -209,12 +229,12 @@ var foundListsSuccess = function (data) {
     var move_to_listId = $(this).attr("listId");
 
     //needs 1 put + second trigger to bypass chrome security policy
-    window.Trello.put("cards/" + card_id, {
+    window.Trello.put(`cards/${card_id}`, {
       idList: move_to_listId,
     });
 
     setTimeout(function () {
-      window.Trello.put("cards/" + card_id, {
+      window.Trello.put(`cards/${card_id}`, {
         idList: move_to_listId,
       });
     }, 1000);
@@ -232,10 +252,10 @@ var foundListsSuccess = function (data) {
   });
 
   $(".close").click(function () {
-    window.Trello.delete("cards/" + card_id);
+    window.Trello.delete(`cards/${card_id}`);
 
     setTimeout(function () {
-      window.Trello.delete("cards/" + card_id);
+      window.Trello.delete(`cards/${card_id}`);
       $("#card-container").remove();
     }, 1000);
   });
@@ -248,19 +268,14 @@ var foundSuccess = function (data) {
     if (card.name == name) {
       found_card_url = card.shortUrl;
       existing_card =
-        '<div id="card-container" class="ad-banner-container ember-view" card_id="' +
-        card.id +
-        '" card_name="' +
-        card.name +
-        '"> <b>Status Trello</b> </br> <b>Name:</b>' +
-        card.name +
-        '<br> <b>Status:</b> <div id="listName" current_listId="' +
-        card.idList +
-        '"></div><br> <b>Link :</b> <a href="' +
-        card.shortUrl +
-        '" target="_blank">' +
-        card.shortUrl +
-        "</a><br> <b>Tags :</b><br>";
+        `<div id="card-container" class="ad-banner-container ember-view" card_id="${card.id}" card_name="${card.name}">
+        <b>Status Trello</b> </br>"
+        <b>Name:</b>${card.name}<br>
+        <b>Status:</b>
+        <div id="listName" current_listId="${card.idList}"></div><br>
+        <b>Link :</b>
+        <a href="${card.shortUrl}" target="_blank">${card.shortUrl}</a><br>
+        <b>Tags :</b><br>`;
 
       $.each(card.labels, function (i, label) {
         existing_card = existing_card.concat(label.name + "</br>");
@@ -272,7 +287,7 @@ var foundSuccess = function (data) {
       desc = desc.replace(url, "");
 
       existing_card = existing_card.concat(
-        '<div id="contact"><b>Contact : </b>' + desc + "</div>"
+        `<div id="contact"><b>Contact : </b>${desc}</div>`
       );
       existing_card = existing_card.concat(
         '<b>Comments : </b><div id="comments"></div>'
@@ -283,14 +298,14 @@ var foundSuccess = function (data) {
       $(".right-rail").prepend(existing_card);
       $("#addToTrello").remove();
 
-      window.Trello.get("lists/" + card.idList, foundListSuccess);
-      alert(trello_board);
+      window.Trello.get(`lists/${card.idList}`, foundListSuccess);
+      
       window.Trello.get(
-        "boards/" + trello_board + "/lists/",
+        `boards/${trello_board}/lists/`,
         foundListsSuccess
       );
       window.Trello.get(
-        "cards/" + card.id + "/actions?filter=commentCard",
+        `cards/${card.id}/actions?filter=commentCard`,
         foundCommentsSuccess
       );
     }
@@ -307,21 +322,37 @@ var foundFailure = function (data) {
 
 // linkedin/in profil
 $(document).ready(function () {
+
+
   var checkContents = setInterval(function () {
+
+    // if it's a linkedin search page
     if (window.location.href.indexOf("/search/results/") > 0) {
       not_seen = false;
     }
 
     if (not_seen) {
-      if ($(".pv-s-profile-actions__label").length > 0) {
+      
+      // action button section
+      if ($(`.${linkedin_actions_section_class}`).length > 0) {
         not_seen = false;
 
-        name = $(".pv-top-card-section__name").text();
-
+        // name of the user
+        const name = $(linkedin_name_classes_selector).text();
+        
         try {
-          parent[0].after(trello_btn);
+          $(`.${linkedin_actions_section_class}`).prepend(trello_btn);
+
           not_connected = false;
-          $("#addToTrello").click(function () {
+
+          // create the Add To Trello button action
+          // this will trigger a popup to create a card in 
+          // Trello and then remove the add to trello button
+          $(document).on('click', '#addToTrello', function() {
+
+            $("#addToTrello").remove();
+            
+            // Trello card setup
             var newCard = {
               name: name,
               desc: url,
@@ -330,15 +361,21 @@ $(document).ready(function () {
               pos: "top",
             };
 
+            // Add Trello Card
             window.Trello.addCard(newCard);
 
-            $("#addToTrello").remove();
-            window.Trello.get("lists/" + trello_list, foundListSuccess);
+            // Update the list of Trello status for the current profil
+            window.Trello.get(`lists/${trello_list}`, foundListSuccess);
+            
+            // Fetch the board list
             window.Trello.get(
-              "boards/" + trello_board + "/lists/",
+              `boards/${trello_board}/lists/`,
               foundListsSuccess
             );
-          });
+
+
+          })
+          
         } catch (e) {
           console.log(e);
         }
@@ -386,7 +423,7 @@ window.setInterval(function () {
     if ($(".button-primary-large").length) {
       $(".button-primary-large").each(function () {
         if ($(this).text().indexOf("Send now") !== -1) {
-          console.log("auto connected successfully");
+          console.log("Auto connected successfully");
           $(this).trigger("click");
         }
       });
@@ -396,7 +433,7 @@ window.setInterval(function () {
 
 $(".search-results__total").prepend(massive_connect_btn);
 
-$("#massiveConnect").click(function () {
+$(document).on('click', '#massiveConnect', function () {
   $("#massiveConnect").text("Please wait ... Connecting");
   wait(500);
   scroll(0, 1000);
@@ -414,7 +451,7 @@ $("#massiveConnect").click(function () {
         //try {
         $(".button-primary-large").each(function () {
           if ($(this).text().indexOf("Send now") !== -1) {
-            console.log("auto connected successfully");
+            console.log("Auto connected successfully");
             $(this).trigger("click");
           }
         });
