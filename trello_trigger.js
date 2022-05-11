@@ -8,7 +8,47 @@ const linkedin_actions_section_class = "pvs-profile-actions"
 const linkedin_name_classes_selector = ".text-heading-xlarge.inline.t-24.v-align-middle.break-words"
 const linkedin_action_button_class = "pvs-profile-actions__action artdeco-button artdeco-button--2 artdeco-button--primary ember-view"
 const linkedin_action_span_class = "artdeco-button__text"
+const linkedin_top_card_class_selector = ".artdeco-card.ember-view.pv-top-card"
+
+const linkedin_section_container_title_function = (title) => `
+  <div class="pvs-header__container">
+    <div class="pvs-header__top-container--no-stack">
+      <div class="pvs-header__left-container--stack">
+        <div class="pvs-header__title-container">
+          <h2 class="pvs-header__title text-heading-large">
+            <span aria-hidden="true"><!---->${title}<!----></span><span class="visually-hidden"><!---->${title}<!----></span>
+          </h2>
+        </div>
+      </div>
+    </div>
+  </div>
+  `
+
+  const linkedin_section_container_content_function = (content) => `
+  <div class="display-flex ph5 pv3">
+    <div class="display-flex full-width">  
+      <div class="pv-shared-text-with-see-more t-14 t-normal t-black display-flex align-items-center">
+        <div class="inline-show-more-text" style="line-height:1.9rem;">
+          <span aria-hidden="true">${content}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+`
+
+
+const linkedin_section_container_section_function = (title, content) => `
+  <section id="trello_section" class="artdeco-card ember-view break-words pb3 mt2">
+    ${linkedin_section_container_title_function(title)}
+    ${linkedin_section_container_content_function(content)}
+  </section>
+`
+
+
 const extension_name = "Trello Linkedin Connector"
+
+// name of the user
+const name = $(linkedin_name_classes_selector).text();
 
 $(document).ready(function () {
   if (key == "") {
@@ -104,8 +144,6 @@ function getPosition(string, subString, index) {
   return string.split(subString, index).join(subString).length;
 }
 
-var name = "";
-
 var url = decodeURI(window.location.href);
 
 var cut = getPosition(url, "/", 5);
@@ -196,7 +234,8 @@ var foundListsSuccess = function (data) {
     </button>
     </br>`
   );
-  console.log(out)
+
+  $(linkedin_top_card_class_selector).first().after(linkedin_section_container_section_function(title="Status Manager", content=out))
 
   $("#allLists").html(out);
 
@@ -264,18 +303,29 @@ var foundListsSuccess = function (data) {
 var foundSuccess = function (data) {
   console.log("Card retrieved.");
 
+  //for each card in trello
   $.each(data, function (index, card) {
+    // pick on the one that is related to the 
+    // current profil
     if (card.name == name) {
+      console.log(card)
+    
       found_card_url = card.shortUrl;
+      //pvs-header__container
+      // build the card
+      var flatten_labels = ""
+      $.each(card.labels, function(index, label) {flatten_labels = flatten_labels.concat(label.name + "</br>")})
+      console.log(flatten_labels)
       existing_card =
-        `<div id="card-container" class="ad-banner-container ember-view" card_id="${card.id}" card_name="${card.name}">
-        <b>Status Trello</b> </br>"
-        <b>Name:</b>${card.name}<br>
-        <b>Status:</b>
-        <div id="listName" current_listId="${card.idList}"></div><br>
-        <b>Link :</b>
-        <a href="${card.shortUrl}" target="_blank">${card.shortUrl}</a><br>
-        <b>Tags :</b><br>`;
+        `
+          <b>Status:</b> <div id="listName" current_listId="${card.idList}"></div><br>
+          <b>Last Activity:</b> ${card.dateLastActivity}</br>
+          <b>Name:</b> ${card.name}<br>
+          
+          <b>Labels :</b><br>${flatten_labels}
+        `;
+      
+      $(linkedin_top_card_class_selector).first().after(linkedin_section_container_section_function("Trello User Card", existing_card))
 
       $.each(card.labels, function (i, label) {
         existing_card = existing_card.concat(label.name + "</br>");
@@ -337,8 +387,7 @@ $(document).ready(function () {
       if ($(`.${linkedin_actions_section_class}`).length > 0) {
         not_seen = false;
 
-        // name of the user
-        const name = $(linkedin_name_classes_selector).text();
+        
         
         try {
           $(`.${linkedin_actions_section_class}`).prepend(trello_btn);
