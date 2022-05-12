@@ -206,6 +206,70 @@ var foundCommentsFailure = function (data) {
   return false;
 };
 
+var foundLabelsSuccess = function (data) {
+
+  // Fetching the recruiting labels
+  var out = "";
+
+  // Fetching the recruiting steps / swimlanes
+  $.each(data, function (i, label) {
+    if(label.name !== "") {
+      out = out.concat(
+        `<button 
+          style="background-color:#44c767;-moz-border-radius:6px;-webkit-border-radius:6px;border-radius:6px;border:1px solid #18ab29;display:inline-block;cursor:pointer;color:#ffffff;font-family:Arial;padding:2px 2px;text-decoration:none;text-shadow:0px 1px 0px #2f6627;" 
+          class="changeLabel" 
+          labelId="${label.id}"
+          labelName="${label.name}"> 
+          Change label to ${label.name}
+        </button>
+        </br>`
+      );
+    }
+  });
+
+
+  $(linkedin_top_card_class_selector).first().next().after(linkedin_section_container_section_function(id=trello_status_section_id, title="Label Manager", content=out))
+
+
+  $("#allLabels").html(out);
+
+  $(".changeLabel").each(function (index) {
+    if ($(this).attr("labelId") == $("#labelName").attr("current_labelId")) {
+      $(this).css("background-color", "red");
+    } else {
+      $(this).css("background-color", "#44c767");
+    }
+  });
+
+  $(document).on('click', '.changeLabel', function () {
+    var move_to_labelId = $(this).attr("labelId");
+    
+    window.Trello.put(`cards/${card_id}/idLabels`, {
+      value: move_to_labelId,
+    })
+
+    $("#labelName").html($(this).attr("labelName"));
+    $("#labelName").attr("current_labelId", move_to_labelId);
+
+    $(".changeLabel").each(function (index) {
+      if ($(this).attr("labelId") == $("#labelName").attr("current_labelId")) {
+        $(this).css("background-color", "red");
+      } else {
+        $(this).css("background-color", "#44c767");
+      }
+    });
+  });
+
+  $(document).on('click', '.close', function () {
+    window.Trello.delete(`cards/${card_id}`);
+  });
+};
+
+var foundLabelsFailure = function () {
+  console.log("Failed retrieving label list");
+};
+
+
 var foundListsSuccess = function (data) {
 
   // Fetching the recruiting steps / swimlanes
@@ -322,15 +386,16 @@ var foundCardSuccess = function (data) {
       //pvs-header__container
       // build the card
       var flatten_labels = ""
-      $.each(card.labels, function(index, label) {flatten_labels = flatten_labels.concat(label.name + "</br>")})
+      var current_labelId = ""
+      $.each(card.labels, function(index, label) {flatten_labels = flatten_labels.concat(label.name + "</br>"); current_labelId = label.id})
       console.log(flatten_labels)
       existing_card =
         `
-          <b>Id:</b> ${card.id}<br>
-          <b>Status:</b> <div id="listName" current_listId="${card.idList}"></div><br>
-          <b>Last Activity:</b> ${card.dateLastActivity}</br>
+          <b>Id:</b><a href="${card.shortUrl}">${card.id}</a><br>
           <b>Name:</b> ${card.name}<br>
-          <b>Labels :</b><br>${flatten_labels}
+          <b>Status:</b> <div id="listName" current_listId="${card.idList}"></div>
+          <b>Label:</b> <div id="labelName" current_labelId="${current_labelId}">${flatten_labels}</div>
+          <b>Last Activity:</b> ${card.dateLastActivity}</br>
         `;
       
       $(linkedin_top_card_class_selector).first().after(linkedin_section_container_section_function(id=trello_user_card_section_id,title="Trello User Card", content=existing_card))
@@ -349,6 +414,12 @@ var foundCardSuccess = function (data) {
         `cards/${card.id}/actions?filter=commentCard`,
         foundCommentsSuccess,
         foundCommentsFailure
+      );
+
+      window.Trello.get(
+        `boards/${trello_board}/labels/`,
+        foundLabelsSuccess,
+        foundLabelsFailure
       );
 
     }
