@@ -474,6 +474,9 @@ $(document).ready(function () {
 
             // Add Trello Card
             window.Trello.addCard(newCard);
+            $(`#${trello_comments_section_id}`).remove()
+            $(`#${trello_status_section_id}`).remove()
+            $(`#${trello_user_card_section_id}`).remove()
 
             // Update the list of Trello status for the current profil
             window.Trello.get(`lists/${trello_list}`, foundListSuccess);
@@ -484,6 +487,7 @@ $(document).ready(function () {
               foundListsSuccess
             );
 
+ 
 
           })
           
