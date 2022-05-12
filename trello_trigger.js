@@ -12,6 +12,7 @@ const linkedin_top_card_class_selector = ".artdeco-card.ember-view.pv-top-card"
 const trello_user_card_section_id = "trello_user_card"
 const trello_comments_section_id = "trello_comments"
 const trello_status_section_id = "trello_status_mgr"
+const trello_actions_section_id = "trello_actions"
 
 const linkedin_section_container_title_function = (title) => `
   <div class="pvs-header__container">
@@ -181,7 +182,7 @@ var foundListSuccess = function (data) {
 };
 
 var foundCommentsSuccess = function (data) {
-  console.log("Comments retrieved.");
+  console.log("Comments retrieved");
 
   var comments = "";
   console.log(data)
@@ -197,8 +198,12 @@ var foundCommentsSuccess = function (data) {
   });
 
   $(linkedin_top_card_class_selector).first().next().after(linkedin_section_container_section_function(id=trello_comments_section_id,title="Trello Comments", content=comments))
-
   
+};
+
+var foundCommentsFailure = function (data) {
+  console.log("Card Comments not retrieved");
+  return false;
 };
 
 var foundListsSuccess = function (data) {
@@ -241,6 +246,8 @@ var foundListsSuccess = function (data) {
   );
 
   $(linkedin_top_card_class_selector).first().after(linkedin_section_container_section_function(id=trello_status_section_id, title="Status Manager", content=out))
+
+  $("#addToTrello").remove();
 
   $("#allLists").html(out);
 
@@ -295,8 +302,13 @@ var foundListsSuccess = function (data) {
   });
 };
 
-var foundSuccess = function (data) {
-  console.log("Card retrieved.");
+var foundListsFailure = function () {
+  console.log("Failed retrieving board list");
+};
+
+
+var foundCardSuccess = function (data) {
+  console.log("Card retrieved");
 
   //for each card in trello
   $.each(data, function (index, card) {
@@ -329,20 +341,24 @@ var foundSuccess = function (data) {
       
       window.Trello.get(
         `boards/${trello_board}/lists/`,
-        foundListsSuccess
+        foundListsSuccess,
+        foundListsFailure
       );
+
       window.Trello.get(
         `cards/${card.id}/actions?filter=commentCard`,
-        foundCommentsSuccess
+        foundCommentsSuccess,
+        foundCommentsFailure
       );
+
     }
   });
 
   return found_card_url;
 };
 
-var foundFailure = function (data) {
-  console.log("Card not retrieved.");
+var foundCardFailure = function (data) {
+  console.log("Card not retrieved");
 
   return false;
 };
@@ -363,9 +379,9 @@ $(document).ready(function () {
       // action button section
       if ($(`.${linkedin_actions_section_class}`).length > 0) {
         not_seen = false;
-        
+
+        $(`.${linkedin_actions_section_class}`).prepend(trello_btn);
         try {
-          $(`.${linkedin_actions_section_class}`).prepend(trello_btn);
 
           not_connected = false;
 
@@ -405,11 +421,9 @@ $(document).ready(function () {
         }
 
         found_card = window.Trello.get(
-          "boards/" +
-            trello_board +
-            "/cards/?fields=name,shortUrl,comments,dateLastActivity,idList,labels,desc",
-          foundSuccess,
-          foundFailure
+          `boards/${trello_board}/cards/?fields=name,shortUrl,comments,dateLastActivity,idList,labels,desc`,
+          foundCardSuccess,
+          foundCardFailure
         );
 
         if ($("#ads-container").length > 0) {
