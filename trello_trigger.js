@@ -49,12 +49,10 @@ const linkedin_section_container_section_function = (id, title, content) => `
 
 const extension_name = "Trello Linkedin Connector"
 
-
-
-
 var card_id = ""
 
 $(document).ready(function () {
+
   // name of the user
   const name = $(linkedin_name_classes_selector).text();
   
@@ -465,6 +463,7 @@ $(document).ready(function () {
           $(document).on('click', '#addToTrello', function() {
 
             name = $(linkedin_name_classes_selector).text();
+
             $("#addToTrello").remove();
             
             // Trello card setup
@@ -488,7 +487,6 @@ $(document).ready(function () {
               foundListsSuccess
             );
 
- 
 
           })
           
