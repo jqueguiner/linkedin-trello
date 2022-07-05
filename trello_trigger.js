@@ -49,12 +49,15 @@ const linkedin_section_container_section_function = (id, title, content) => `
 
 const extension_name = "Trello Linkedin Connector"
 
-// name of the user
-const name = $(linkedin_name_classes_selector).text();
+
+
 
 var card_id = ""
 
 $(document).ready(function () {
+  // name of the user
+  const name = $(linkedin_name_classes_selector).text();
+  
   if (key == "") {
     console.log("Get Trello API Key");
 
@@ -461,6 +464,7 @@ $(document).ready(function () {
           // Trello and then remove the add to trello button
           $(document).on('click', '#addToTrello', function() {
 
+            name = $(linkedin_name_classes_selector).text();
             $("#addToTrello").remove();
             
             // Trello card setup
@@ -474,9 +478,6 @@ $(document).ready(function () {
 
             // Add Trello Card
             window.Trello.addCard(newCard);
-            $(`#${trello_comments_section_id}`).remove()
-            $(`#${trello_status_section_id}`).remove()
-            $(`#${trello_user_card_section_id}`).remove()
 
             // Update the list of Trello status for the current profil
             window.Trello.get(`lists/${trello_list}`, foundListSuccess);
