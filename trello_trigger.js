@@ -49,12 +49,13 @@ const linkedin_section_container_section_function = (id, title, content) => `
 
 const extension_name = "Trello Linkedin Connector"
 
-// name of the user
-const name = $(linkedin_name_classes_selector).text();
-
 var card_id = ""
 
 $(document).ready(function () {
+
+  // name of the user
+  const name = $(linkedin_name_classes_selector).text();
+  
   if (key == "") {
     console.log("Get Trello API Key");
 
@@ -460,6 +461,8 @@ $(document).ready(function () {
           // this will trigger a popup to create a card in 
           // Trello and then remove the add to trello button
           $(document).on('click', '#addToTrello', function() {
+
+            name = $(linkedin_name_classes_selector).text();
 
             $("#addToTrello").remove();
             
