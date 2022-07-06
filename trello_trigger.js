@@ -48,13 +48,13 @@ const linkedin_section_container_section_function = (id, title, content) => `
 `
 
 const extension_name = "Trello Linkedin Connector"
-
+var name = $(linkedin_name_classes_selector).text();
 var card_id = ""
 
 $(document).ready(function () {
 
   // name of the user
-  const name = $(linkedin_name_classes_selector).text();
+  name = $(linkedin_name_classes_selector).text();
   
   if (key == "") {
     console.log("Get Trello API Key");
@@ -375,6 +375,8 @@ var foundListsFailure = function () {
 var foundCardSuccess = function (data) {
   console.log("Card retrieved");
 
+  name = $(linkedin_name_classes_selector).text();
+
   //for each card in trello
   $.each(data, function (index, card) {
     // pick on the one that is related to the 
@@ -482,10 +484,10 @@ $(document).ready(function () {
             window.Trello.get(`lists/${trello_list}`, foundListSuccess);
             
             // Fetch the board list
-            window.Trello.get(
-              `boards/${trello_board}/lists/`,
-              foundListsSuccess
-            );
+            //window.Trello.get(
+            //  `boards/${trello_board}/lists/`,
+            //  foundListsSuccess
+            //);
 
 
           })
